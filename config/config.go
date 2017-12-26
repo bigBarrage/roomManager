@@ -13,8 +13,9 @@ type BroadcastingStationOption struct {
 var (
 	UseBoradcasting         = false                      //是否使用广播站
 	RoomCleanTimer          = time.Minute * 5            //房间清理时间间隔
-	MaxLengthOfRows         = int64(1024)                //房间内单行最大节点数
-	MaxMessageChannelLength = int64(128)                 //消息通道最大长度
+	MaxLengthOfRows         = 1024                       //房间内单行最大节点数
+	MaxMessageChannelLength = 128                        //消息通道最大长度
+	MessageReadBufferLength = 1024                       //从websocket连接里面读取消息的缓存大小
 	broadcastingOption      = BroadcastingStationOption{ //广播站连接参数
 		Host: "localhost",
 		Port: 9981,
@@ -36,7 +37,7 @@ func SetRoomCleanTimer(t time.Duration) {
 	RoomCleanTimer = t
 }
 
-func SetMaxLengthOfRows(length int64) bool {
+func SetMaxLengthOfRows(length int) bool {
 	if length <= 0 {
 		return false
 	}

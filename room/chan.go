@@ -82,6 +82,7 @@ func CloseRoom(roomID string) error {
 		delete(messageChannel, roomID)
 		close(c)
 	}
+	return nil
 }
 
 //外部对房间发送消息

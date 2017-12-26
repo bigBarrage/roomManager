@@ -1,5 +1,8 @@
 package room
 
+/*
+新的想法是：由外界对房间进行发送整理和重载黑名单的触发，不再进行内部维护
+
 import (
 	"time"
 
@@ -25,3 +28,4 @@ func CleanRoomCircle() {
 		time.Sleep(config.RoomCleanTimer)
 	}
 }
+*/
