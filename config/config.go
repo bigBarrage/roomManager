@@ -11,6 +11,8 @@ type BroadcastingStationOption struct {
 }
 
 var (
+	ListenPort              = 2346                       //监听端口
+	ListenPath              = "websocket"                //监听的连接地址
 	UseBoradcasting         = false                      //是否使用广播站
 	RoomCleanTimer          = time.Minute * 5            //房间清理时间间隔
 	MaxLengthOfRows         = 1024                       //房间内单行最大节点数

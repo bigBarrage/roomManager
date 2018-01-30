@@ -26,8 +26,8 @@ func IsBannedUserID(userID string) bool {
 	var ok bool
 	for _, i := range []byte(userID) {
 		if currNode, ok = currNode[i]; !ok {
-			return false
+			return true
 		}
 	}
-	return true
+	return false
 }

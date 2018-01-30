@@ -1,6 +1,10 @@
 package room
 
-import "github.com/bigBarrage/roomManager/config"
+import (
+	"sync"
+
+	"github.com/bigBarrage/roomManager/config"
+)
 
 //被Main Recive调用
 //节点更换房间时被调用的房间
@@ -14,6 +18,7 @@ func changeRoom(roomInfo *RoomInfo, node *ClientNode) {
 	//如果房间为空，则添加一个行
 	if len(roomInfo.Rows) == 0 {
 		row := &RowList{}
+		row.RowLock = &sync.Mutex{}
 		row.Nodes = make([]*ClientNode, 0, config.MaxLengthOfRows)
 		roomInfo.Rows = append(roomInfo.Rows, row)
 	}
@@ -32,6 +37,7 @@ func changeRoom(roomInfo *RoomInfo, node *ClientNode) {
 	//如果当前房间所有的行都是满的，则创建一个新行，把节点放进去
 	if !addSuccess {
 		row := &RowList{}
+		row.RowLock = &sync.Mutex{}
 		row.Nodes = make([]*ClientNode, 0, config.MaxLengthOfRows)
 		row.Nodes = append(row.Nodes, node)
 		roomInfo.Rows = append(roomInfo.Rows, row)

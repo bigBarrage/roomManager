@@ -1,7 +1,11 @@
 package room
 
-import "github.com/bigBarrage/roomManager/system"
-import "github.com/bigBarrage/roomManager/banned/utils"
+import (
+	"fmt"
+
+	"github.com/bigBarrage/roomManager/banned/utils"
+	"github.com/bigBarrage/roomManager/system"
+)
 
 //守护协程，用于一直从通道里面获取消息
 func daemonMainReciver(c chan system.NodeMessage, roomInfo *RoomInfo) {
@@ -23,6 +27,7 @@ func daemonMainReciver(c chan system.NodeMessage, roomInfo *RoomInfo) {
 		case system.NODE_MESSAGE_TYPE_RELOAD_BANNED_WORDS:
 			utils.LoadWordList()
 		default:
+			fmt.Println("main revicer获得消息")
 			sendMessage(roomInfo, &s)
 		}
 	}

@@ -26,9 +26,8 @@ func Run() error {
 	if check() != nil {
 		os.Exit(1)
 	}
-	bsopt := config.GetBroadcastingStation()
-	http.HandleFunc("/"+bsopt.Path, handler)
-	return http.ListenAndServe(":"+fmt.Sprint(bsopt.Port), nil)
+	http.HandleFunc("/"+config.ListenPath, handler)
+	return http.ListenAndServe(":"+fmt.Sprint(config.ListenPort), nil)
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
@@ -40,27 +39,24 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 	node := &room.ClientNode{}
 
+	fmt.Println("建立新连接")
 	addrSlice := strings.Split(r.RemoteAddr, ":")
 	node.IP = addrSlice[0]
 
 	node.IsAlive = true
 	node.Conn = conn
 	node.Add()
-	fmt.Println("获取到新的连接：", node.Conn)
 	processMessage(node)
 }
 
 //做启动前检查，保证各项设置基本运行状况
 func check() error {
-	//lines, _ := strconv.Atoi(os.Getenv("LINES"))
-	columns := os.Getenv("COLUMNS")
-	fmt.Println(columns)
 	fmt.Fprintln(os.Stdout, "开始进行启动前检查：")
-	fmt.Println("消息处理方法：", strings.Repeat(".", 7))
 	if register.ProcessMessageFunc == nil {
 		fmt.Fprintln(os.Stderr, "消息处理方法未注册...")
 		return errors.New("check failed")
 	}
+	fmt.Fprint(os.Stdout, "检查完毕")
 	return nil
 }
 
@@ -69,24 +65,29 @@ func processMessage(node *room.ClientNode) {
 	for {
 		mType, reader, err := node.Conn.NextReader()
 
+		fmt.Println(1)
 		if mType == websocket.CloseMessage || mType == -1 {
 			node.Close()
 			return
 		}
 
+		fmt.Println(2)
 		if err != nil {
 			return
 		}
 
+		fmt.Println(3)
 		if node.DisableRead {
 			continue
 		}
 
+		fmt.Println(4)
 		if banned.IsBannedUserID(node.UserID) {
 			node.DisableRead = true
 			continue
 		}
 
+		fmt.Println(5)
 		msg := make([]byte, 0, config.MessageReadBufferLength)
 		for {
 			tmp := make([]byte, config.MessageReadBufferLength)
@@ -97,11 +98,15 @@ func processMessage(node *room.ClientNode) {
 			}
 			msg = append(msg, tmp...)
 		}
+		fmt.Println(6)
 		//如果发送消息时间间隔小于规定时间，不会被发送
 		if time.Now().Truncate(config.MessageTimeInterval).Before(node.LastSendTime) {
 			continue
 		}
 
+		fmt.Println(7)
 		register.ProcessMessageFunc(msg, node)
+
+		fmt.Println(8)
 	}
 }

@@ -52,6 +52,7 @@ func CreateRoom(roomID string) error {
 	messageChannel[roomID] = c
 
 	roomInfo := &RoomInfo{}
+	roomInfo.Lock = &sync.RWMutex{}
 	roomInfo.RoomID = roomID
 	roomInfo.LastChangeTime = time.Now()
 	//启动一系列worker
