@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/bigBarrage/roomManager/banned"
 	"github.com/bigBarrage/roomManager/config"
@@ -27,12 +28,13 @@ func Run() error {
 	}
 	bsopt := config.GetBroadcastingStation()
 	http.HandleFunc("/"+bsopt.Path, handler)
-	return http.ListenAndServe(fmt.Sprint(bsopt.Port), nil)
+	return http.ListenAndServe(":"+fmt.Sprint(bsopt.Port), nil)
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
+		fmt.Println("连接失败：", err.Error())
 		return
 	}
 
@@ -44,11 +46,17 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	node.IsAlive = true
 	node.Conn = conn
 	node.Add()
+	fmt.Println("获取到新的连接：", node.Conn)
 	processMessage(node)
 }
 
 //做启动前检查，保证各项设置基本运行状况
 func check() error {
+	//lines, _ := strconv.Atoi(os.Getenv("LINES"))
+	columns := os.Getenv("COLUMNS")
+	fmt.Println(columns)
+	fmt.Fprintln(os.Stdout, "开始进行启动前检查：")
+	fmt.Println("消息处理方法：", strings.Repeat(".", 7))
 	if register.ProcessMessageFunc == nil {
 		fmt.Fprintln(os.Stderr, "消息处理方法未注册...")
 		return errors.New("check failed")
@@ -88,8 +96,12 @@ func processMessage(node *room.ClientNode) {
 				break
 			}
 			msg = append(msg, tmp...)
-
-			register.ProcessMessageFunc(msg, node)
 		}
+		//如果发送消息时间间隔小于规定时间，不会被发送
+		if time.Now().Truncate(config.MessageTimeInterval).Before(node.LastSendTime) {
+			continue
+		}
+
+		register.ProcessMessageFunc(msg, node)
 	}
 }

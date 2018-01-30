@@ -12,7 +12,7 @@ import (
 )
 
 var messageChannel map[string]chan system.NodeMessage
-var messageChannelLock *sync.RWMutex
+var messageChannelLock = &sync.RWMutex{}
 
 func init() {
 	messageChannel = make(map[string]chan system.NodeMessage)
