@@ -8,6 +8,17 @@
 
     项目入口文件：https://github.com/bigBarrage/example
     广播站项目：https://github.com/bigBarrage/broadcastingStation
+
+    欢迎加入bigBarrage讨论群QQ：565765156
+```
+
+```
+    版本Flag：
+
+        1.0标准：
+            1.自动化代码测试完成
+            2.进行过压力测试
+            3.有了一些文档，用户可以在阅读文档的基础上自行开发自己需要的弹幕系统
 ```
 
 ```
