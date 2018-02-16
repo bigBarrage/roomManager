@@ -26,6 +26,7 @@ func Run() error {
 	if check() != nil {
 		os.Exit(1)
 	}
+	room.ConnBroadcastingStation()
 	http.HandleFunc("/"+config.ListenPath, handler)
 	return http.ListenAndServe(":"+fmt.Sprint(config.ListenPort), nil)
 }
@@ -56,7 +57,14 @@ func check() error {
 		fmt.Fprintln(os.Stderr, "消息处理方法未注册...")
 		return errors.New("check failed")
 	}
-	fmt.Fprint(os.Stdout, "检查完毕")
+
+	if config.UseBoradcasting {
+		if register.ProcessMessageFromBroadcastingFunc == nil {
+			fmt.Fprintln(os.Stderr, "检查广播站处理程序失败...")
+			return errors.New("check failed")
+		}
+	}
+	fmt.Fprintln(os.Stdout, "检查完毕")
 	return nil
 }
 

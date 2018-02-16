@@ -87,16 +87,12 @@ func CloseRoom(roomID string) error {
 }
 
 //外部对房间发送消息
-func SendMessageFromOuter(roomID string, message interface{}) {
+func SendMessageFromOuter(roomID string, nm system.NodeMessage) {
 	if roomID == "" {
 		return
 	}
 	if c, ok := messageChannel[roomID]; ok {
-		nm := system.NodeMessage{
-			MessageType:   system.NODE_MESSAGE_TYPE_CLOSE_ROOM,
-			MessageTarget: system.MESSAGE_TARGET_BROADCASTINGSTATION,
-			Body:          message,
-		}
 		c <- nm
 	}
+	return
 }

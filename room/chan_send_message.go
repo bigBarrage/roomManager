@@ -1,9 +1,11 @@
 package room
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/bigBarrage/roomManager/system"
+	"github.com/gorilla/websocket"
 )
 
 func sendMessageToRoom(roomInfo *RoomInfo, message interface{}) {
@@ -25,7 +27,16 @@ func sendMessageToRoom(roomInfo *RoomInfo, message interface{}) {
 }
 
 func sendMessageToBroadcastingStation(roomInfo *RoomInfo, message interface{}) {
-
+	w, err := BroadcastingConnection.NextWriter(websocket.TextMessage)
+	if err != nil {
+		return
+	}
+	defer w.Close()
+	msg, err := json.Marshal(message)
+	if err != nil {
+		return
+	}
+	w.Write(msg)
 }
 
 func sendMessage(roomInfo *RoomInfo, nm *system.NodeMessage) {

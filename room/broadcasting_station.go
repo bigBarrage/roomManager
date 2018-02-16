@@ -1,4 +1,4 @@
-package run
+package room
 
 import (
 	"fmt"
@@ -18,7 +18,7 @@ var (
 	err                    error
 )
 
-func init() {
+func ConnBroadcastingStation() {
 	if config.UseBoradcasting {
 		tryToConnBroadcastingStation()
 		//处理堵到消息之后
@@ -42,6 +42,7 @@ func init() {
 					msg = append(msg, tmp...)
 				}
 				//未完：这里需要加入读到消息之后的处理器
+				fmt.Println("从广播站收到消息：", string(msg))
 				register.ProcessMessageFromBroadcastingFunc(msg)
 			}
 		}()
@@ -69,7 +70,7 @@ func tryToConnBroadcastingStation() {
 			conn.Close()
 			continue
 		}
-		fmt.Println("创建成功！")
+		fmt.Println("广播站连接创建成功！")
 		return
 	}
 	os.Exit(0)

@@ -69,11 +69,10 @@ func (this *ClientNode) ChangeRoom(roomID string) {
 
 //发送消息
 func (this *ClientNode) SendMessageToRoom(message interface{}) {
-	/*
-		if this.IsAlive == false || this.DisableRead || this.RoomID == "" || this.UserID == "" {
-			return
-		}
-	*/
+	if this.IsAlive == false || this.DisableRead || this.RoomID == "" || this.UserID == "" {
+		fmt.Printf("%+v\n", this)
+		return
+	}
 
 	nm := system.NodeMessage{
 		MessageType:   system.NODE_MESSAGE_TYPE_SEND_MESSAGE,

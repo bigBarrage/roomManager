@@ -3,7 +3,7 @@ package system
 type NodeMessage struct {
 	MessageType   int         `json:"type"`    //消息类型，类型为NODE_MESSAGE_TYPE组
 	MessageTarget int         `json:"target"`  //发送目标
-	RommId        string      `json:"room_id"` //房间ID
+	RoomId        string      `json:"room_id"` //房间ID
 	Body          interface{} `json:"body"`    //消息体
 }
 
@@ -26,3 +26,9 @@ const (
 	MESSAGE_TARGET_BROADCASTINGSTATION //发送目标：广播站
 	MESSAGE_TARGET_ROOM                //发送目标：房间
 )
+
+type MessageNode interface {
+	ChangeRoom(RoomID string)
+	SendMessageToRoom(message interface{})
+	ChangeUserID(userID string)
+}
