@@ -1,13 +1,15 @@
-package run
+package room
 
 import (
 	"fmt"
+	"io"
 	"net"
 	"net/http"
 	"net/url"
 	"os"
 
 	"github.com/bigBarrage/roomManager/config"
+	"github.com/bigBarrage/roomManager/register"
 	"github.com/gorilla/websocket"
 )
 
@@ -16,25 +18,33 @@ var (
 	err                    error
 )
 
-func init() {
-
+func ConnBroadcastingStation() {
 	if config.UseBoradcasting {
 		tryToConnBroadcastingStation()
 		//处理堵到消息之后
 		go func() {
-			mType, reader, err := BroadcastingConnection.NextReader()
-			if mType == websocket.CloseError || mType == -1 {
-				tryToConnBroadcastingStation()
+			for {
+				mType, reader, err := BroadcastingConnection.NextReader()
+				if mType == websocket.CloseMessage || mType == -1 {
+					tryToConnBroadcastingStation()
+				}
+				if err != nil {
+					continue
+				}
+				msg := make([]byte, 0, config.MessageReadBufferLength)
+				for {
+					tmp := make([]byte, config.MessageReadBufferLength)
+					l, err := reader.Read(tmp)
+					if err == io.EOF || l < config.MessageReadBufferLength {
+						msg = append(msg, tmp[:l]...)
+						break
+					}
+					msg = append(msg, tmp...)
+				}
+				//未完：这里需要加入读到消息之后的处理器
+				fmt.Println("从广播站收到消息：", string(msg))
+				register.ProcessMessageFromBroadcastingFunc(msg)
 			}
-			if err != nil {
-				continue
-			}
-			msg := make([]byte, 1024)
-			l, err := reader.Read(msg)
-			if err != nil {
-				continue
-			}
-			//未完：这里需要加入读到消息之后的处理器
 		}()
 	}
 }
@@ -60,7 +70,7 @@ func tryToConnBroadcastingStation() {
 			conn.Close()
 			continue
 		}
-		fmt.Println("创建成功！")
+		fmt.Println("广播站连接创建成功！")
 		return
 	}
 	os.Exit(0)

@@ -2,8 +2,10 @@ package room
 
 import (
 	"encoding/json"
+	"fmt"
 	"time"
 
+	"github.com/bigBarrage/roomManager/config"
 	"github.com/bigBarrage/roomManager/system"
 	"github.com/gorilla/websocket"
 )
@@ -57,6 +59,10 @@ func (this *ClientNode) ChangeRoom(roomID string) {
 			Body:          this,
 		}
 		sendMessageToChannel(this, nm)
+		fmt.Println("更换房间成功")
+	} else {
+		fmt.Println("更换房间失败")
+		this.SendMessage(system.NodeMessage{MessageType: system.NODE_MESSAGE_TYPE_ROOM_NOT_EXISTS})
 	}
 	messageChannelLock.RUnlock()
 }
@@ -64,6 +70,7 @@ func (this *ClientNode) ChangeRoom(roomID string) {
 //发送消息
 func (this *ClientNode) SendMessageToRoom(message interface{}) {
 	if this.IsAlive == false || this.DisableRead || this.RoomID == "" || this.UserID == "" {
+		fmt.Printf("%+v\n", this)
 		return
 	}
 
@@ -72,8 +79,14 @@ func (this *ClientNode) SendMessageToRoom(message interface{}) {
 		MessageTarget: system.MESSAGE_TARGET_BROADCASTINGSTATION,
 		Body:          message,
 	}
+	if config.UseBoradcasting == true {
+		nm.MessageTarget = system.MESSAGE_TARGET_BROADCASTINGSTATION
+	} else {
+		nm.MessageTarget = system.MESSAGE_TARGET_ROOM
+	}
 
-	sendMessageToChannel(this, nm)
+	rs := sendMessageToChannel(this, nm)
+	fmt.Println("发送结果：", rs)
 }
 
 //对本节点发送消息

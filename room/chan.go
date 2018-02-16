@@ -12,7 +12,7 @@ import (
 )
 
 var messageChannel map[string]chan system.NodeMessage
-var messageChannelLock *sync.RWMutex
+var messageChannelLock = &sync.RWMutex{}
 
 func init() {
 	messageChannel = make(map[string]chan system.NodeMessage)
@@ -52,6 +52,7 @@ func CreateRoom(roomID string) error {
 	messageChannel[roomID] = c
 
 	roomInfo := &RoomInfo{}
+	roomInfo.Lock = &sync.RWMutex{}
 	roomInfo.RoomID = roomID
 	roomInfo.LastChangeTime = time.Now()
 	//启动一系列worker
@@ -82,19 +83,16 @@ func CloseRoom(roomID string) error {
 		delete(messageChannel, roomID)
 		close(c)
 	}
+	return nil
 }
 
 //外部对房间发送消息
-func SendMessageFromOuter(roomID string, message interface{}) {
+func SendMessageFromOuter(roomID string, nm system.NodeMessage) {
 	if roomID == "" {
 		return
 	}
 	if c, ok := messageChannel[roomID]; ok {
-		nm := system.NodeMessage{
-			MessageType:   system.NODE_MESSAGE_TYPE_CLOSE_ROOM,
-			MessageTarget: system.MESSAGE_TARGET_BROADCASTINGSTATION,
-			Body:          message,
-		}
 		c <- nm
 	}
+	return
 }
