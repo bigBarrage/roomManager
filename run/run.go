@@ -22,6 +22,7 @@ var upgrader = websocket.Upgrader{
 	CheckOrigin:     func(r *http.Request) bool { return true },
 }
 
+//启动服务入口
 func Run() error {
 	if check() != nil {
 		os.Exit(1)

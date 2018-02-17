@@ -1,5 +1,6 @@
 package system
 
+//roomManager内传递消息用的结构
 type NodeMessage struct {
 	MessageType   int         `json:"type"`    //消息类型，类型为NODE_MESSAGE_TYPE组
 	MessageTarget int         `json:"target"`  //发送目标
@@ -27,6 +28,7 @@ const (
 	MESSAGE_TARGET_ROOM                //发送目标：房间
 )
 
+//用户节点接口
 type MessageNode interface {
 	ChangeRoom(RoomID string)
 	SendMessageToRoom(message interface{})

@@ -18,6 +18,7 @@ var (
 	err                    error
 )
 
+//连接广播站以及监听工作
 func ConnBroadcastingStation() {
 	if config.UseBoradcasting {
 		tryToConnBroadcastingStation()
