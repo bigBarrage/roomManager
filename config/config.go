@@ -4,6 +4,7 @@ import (
 	"time"
 )
 
+//连接广播站的配置
 type BroadcastingStationOption struct {
 	Host string
 	Port int64
@@ -32,14 +33,17 @@ func SetBroadcastingStation(opt BroadcastingStationOption) {
 	UseBoradcasting = true
 }
 
+//获取广播站配置
 func GetBroadcastingStation() BroadcastingStationOption {
 	return broadcastingOption
 }
 
+//设定房间清理间隔
 func SetRoomCleanTimer(t time.Duration) {
 	RoomCleanTimer = t
 }
 
+//设定单行最大承载连接节点数量
 func SetMaxLengthOfRows(length int) bool {
 	if length <= 0 {
 		return false

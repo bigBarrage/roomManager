@@ -4,6 +4,7 @@ import "strings"
 
 var bannedUserIDList []string
 
+//设置用户黑名单
 func SetUserIDs(list []string) {
 	if len(list) == 0 {
 		return
@@ -16,6 +17,7 @@ func SetUserIDs(list []string) {
 	}
 }
 
+//检查用户是否在黑名单内
 func IsBannedUserID(userID string) bool {
 	if bannedUserIDList == nil || len(bannedUserIDList) == 0 {
 		return false

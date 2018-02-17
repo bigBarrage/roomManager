@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+//房间信息结构体
 type RoomInfo struct {
 	RoomID         string        //房间ID
 	Rows           []*RowList    //房间多行Slice
@@ -13,6 +14,7 @@ type RoomInfo struct {
 	LastChangeTime time.Time     //最后一次更新时间
 }
 
+//行结构体
 type RowList struct {
 	Nodes   []*ClientNode //节点列表
 	RowLock *sync.Mutex   //读写锁
