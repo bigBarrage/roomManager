@@ -10,10 +10,10 @@ type ipNode map[uint8]ipNode
 
 //设置IP黑名单
 func SetIpList(list []string) {
+	bannedIpList = ipNode{}
 	if len(list) == 0 {
 		return
 	}
-	bannedIpList = ipNode{}
 	for _, ipStr := range list {
 		ip := net.ParseIP(ipStr).To4()
 
@@ -30,6 +30,9 @@ func SetIpList(list []string) {
 
 //检查IP是否在黑名单内
 func IsBannedIP(ip string) bool {
+	if len(bannedIpList) == 0 {
+		return false
+	}
 	parsedIp := net.ParseIP(ip).To4()
 	currNode := bannedIpList
 	var ok bool

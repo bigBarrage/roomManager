@@ -10,6 +10,9 @@ import (
 //被Main Revice调用
 //清理当前房间里面不属于自己房间的节点
 func cleanRoom(roomInfo *RoomInfo) {
+	if !roomInfo.HasBrokenNode {
+		return
+	}
 	//打印整理前的房间信息
 	fmt.Println("========================整理前", time.Now().Format("2006-01-02 15:04:05"), "========================")
 
@@ -67,4 +70,5 @@ func cleanRoom(roomInfo *RoomInfo) {
 	}
 	fmt.Println("耗时：", endTime.Sub(startTime))
 	fmt.Println("========================整理完毕", time.Now().Format("2006-01-02 15:04:05"), "========================")
+	roomInfo.HasBrokenNode = false
 }

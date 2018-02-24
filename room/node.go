@@ -47,14 +47,20 @@ func (this *ClientNode) ChangeRoom(roomID string) {
 	if this.IsAlive == false || this.RoomID == roomID {
 		return
 	}
+	nm := system.NodeMessage{
+		MessageType:   system.NODE_MESSAGE_TYPE_ROOM_HAS_BROKEN_NODE,
+		MessageTarget: system.MESSAGE_TARGET_ROOM,
+		Body:          this,
+	}
 	this.RoomID = roomID
+	sendMessageToChannel(this, nm)
 
 	messageChannelLock.RLock()
 	if c, ok := messageChannel[this.RoomID]; ok {
 		this.SendChannel = &c
 
-		nm := system.NodeMessage{
-			MessageType:   system.NODE_MESSAGE_TYPE_IN_HALL,
+		nm = system.NodeMessage{
+			MessageType:   system.NODE_MESSAGE_TYPE_CHANGE_ROOM,
 			MessageTarget: system.MESSAGE_TARGET_ROOM,
 			Body:          this,
 		}
@@ -111,5 +117,11 @@ func (this *ClientNode) ChangeUserID(userID string) {
 
 //关闭连接
 func (this *ClientNode) Close() {
+	nm := system.NodeMessage{
+		MessageType:   system.NODE_MESSAGE_TYPE_ROOM_HAS_BROKEN_NODE,
+		MessageTarget: system.MESSAGE_TARGET_ROOM,
+		Body:          this,
+	}
+	sendMessageToChannel(this, nm)
 	this.IsAlive = false
 }

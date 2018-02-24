@@ -4,6 +4,10 @@ import (
 	"testing"
 )
 
+func TestNullIPSearch(t *testing.T) {
+	t.Log("空IP列表时鉴定结果为：", IsBannedIP("24.192.000.000"))
+}
+
 func TestSetIPList(t *testing.T) {
 	list := []string{
 		"024.192.000.000",

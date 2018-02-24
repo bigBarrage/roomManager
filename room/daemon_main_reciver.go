@@ -26,6 +26,8 @@ func daemonMainReciver(c chan system.NodeMessage, roomInfo *RoomInfo) {
 			utils.LoadUserList()
 		case system.NODE_MESSAGE_TYPE_RELOAD_BANNED_WORDS:
 			utils.LoadWordList()
+		case system.NODE_MESSAGE_TYPE_ROOM_HAS_BROKEN_NODE:
+			roomInfo.HasBrokenNode = true
 		default:
 			fmt.Println("main revicer获得消息")
 			sendMessage(roomInfo, &s)
