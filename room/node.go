@@ -70,7 +70,6 @@ func (this *ClientNode) ChangeRoom(roomID string) {
 //发送消息
 func (this *ClientNode) SendMessageToRoom(message interface{}) {
 	if this.IsAlive == false || this.DisableRead || this.RoomID == "" || this.UserID == "" {
-		fmt.Printf("%+v\n", this)
 		return
 	}
 

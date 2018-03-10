@@ -74,29 +74,24 @@ func processMessage(node *room.ClientNode) {
 	for {
 		mType, reader, err := node.Conn.NextReader()
 
-		fmt.Println(1)
 		if mType == websocket.CloseMessage || mType == -1 {
 			node.Close()
 			return
 		}
 
-		fmt.Println(2)
 		if err != nil {
 			return
 		}
 
-		fmt.Println(3)
 		if node.DisableRead {
 			continue
 		}
 
-		fmt.Println(4)
 		if banned.IsBannedUserID(node.UserID) {
 			node.DisableRead = true
 			continue
 		}
 
-		fmt.Println(5)
 		msg := make([]byte, 0, config.MessageReadBufferLength)
 		for {
 			tmp := make([]byte, config.MessageReadBufferLength)
@@ -107,15 +102,12 @@ func processMessage(node *room.ClientNode) {
 			}
 			msg = append(msg, tmp...)
 		}
-		fmt.Println(6)
 		//如果发送消息时间间隔小于规定时间，不会被发送
 		if time.Now().Truncate(config.MessageTimeInterval).Before(node.LastSendTime) {
 			continue
 		}
 
-		fmt.Println(7)
 		register.ProcessMessageFunc(msg, node)
 
-		fmt.Println(8)
 	}
 }
