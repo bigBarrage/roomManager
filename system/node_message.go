@@ -32,5 +32,6 @@ const (
 type MessageNode interface {
 	ChangeRoom(RoomID string)
 	SendMessageToRoom(message interface{})
+	SendMessage(message interface{})
 	ChangeUserID(userID string)
 }
