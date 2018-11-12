@@ -11,8 +11,10 @@ import (
 
 	"github.com/bigBarrage/roomManager/banned"
 	"github.com/bigBarrage/roomManager/config"
+	"github.com/bigBarrage/roomManager/logs"
 	"github.com/bigBarrage/roomManager/register"
 	"github.com/bigBarrage/roomManager/room"
+	"github.com/bigBarrage/roomManager/system"
 	"github.com/gorilla/websocket"
 )
 
@@ -35,7 +37,7 @@ func Run() error {
 func handler(w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		fmt.Println("连接失败：", err.Error())
+		logs.DisplayLog(logs.DISPLAY_ERROR_LEVEL_NOTICE, "连接失败"+err.Error())
 		return
 	}
 
@@ -55,17 +57,17 @@ func handler(w http.ResponseWriter, r *http.Request) {
 func check() error {
 	fmt.Fprintln(os.Stdout, "开始进行启动前检查：")
 	if register.ProcessMessageFunc == nil {
-		fmt.Fprintln(os.Stderr, "消息处理方法未注册...")
+		logs.DisplayLog(logs.DISPLAY_ERROR_LEVEL_ERROR, "消息处理方法未注册...")
 		return errors.New("check failed")
 	}
 
 	if config.UseBoradcasting {
 		if register.ProcessMessageFromBroadcastingFunc == nil {
-			fmt.Fprintln(os.Stderr, "检查广播站处理程序失败...")
+			logs.DisplayLog(logs.DISPLAY_ERROR_LEVEL_ERROR, "检查广播站处理程序失败...")
 			return errors.New("check failed")
 		}
 	}
-	fmt.Fprintln(os.Stdout, "检查完毕")
+	logs.DisplayLog(logs.DISPLAY_ERROR_LEVEL_NOTICE, "检查完毕")
 	return nil
 }
 
@@ -84,11 +86,13 @@ func processMessage(node *room.ClientNode) {
 		}
 
 		if node.DisableRead {
+			node.SendMessage(system.ErrorReadDisabledMessage)
 			continue
 		}
 
 		if banned.IsBannedUserID(node.UserID) {
 			node.DisableRead = true
+			node.SendMessage(system.ErrorReadDisabledMessage)
 			continue
 		}
 
@@ -104,10 +108,10 @@ func processMessage(node *room.ClientNode) {
 		}
 		//如果发送消息时间间隔小于规定时间，不会被发送
 		if time.Now().Truncate(config.MessageTimeInterval).Before(node.LastSendTime) {
+			node.SendMessage(system.ErrorTalkTooFastMessage)
 			continue
 		}
 
 		register.ProcessMessageFunc(msg, node)
-
 	}
 }

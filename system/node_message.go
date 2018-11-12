@@ -20,6 +20,17 @@ const (
 	NODE_MESSAGE_TYPE_RELOAD_BANNED_USER  //重载用户ID黑名单
 	NODE_MESSAGE_TYPE_RELOAD_BANNED_WORDS //重载敏感词列表
 	NODE_MESSAGE_TYPE_ROOM_NOT_EXISTS     //房间不存在
+	NODE_MESSAGE_TYPE_PING                //PING
+	NODE_MESSAGE_TYPE_PONG                //PONG
+)
+
+const (
+	//一些错误信息
+	_                                 = iota + 400
+	MESSAGE_ERROR_TYPE_READDISABLES   //被禁言
+	MESSAGE_ERROR_TYPE_USERID_IS_NULL //用户信息不完善
+	MESSAGE_ERROR_TYPE_UNKNOWN        //未知错误
+	MESSAGE_ERROR_TYPE_TALK_TOO_FAST  //发言速度太快
 )
 
 const (
@@ -34,4 +45,18 @@ type MessageNode interface {
 	SendMessageToRoom(message interface{})
 	SendMessage(message interface{})
 	ChangeUserID(userID string)
+}
+
+var (
+	ErrorReadDisabledMessage *NodeMessage
+	ErrorUserIdIsNullMessage *NodeMessage
+	ErrorUnknownMessage      *NodeMessage
+	ErrorTalkTooFastMessage  *NodeMessage
+)
+
+func init() {
+	ErrorReadDisabledMessage = &NodeMessage{MessageType: MESSAGE_ERROR_TYPE_READDISABLES}
+	ErrorUserIdIsNullMessage = &NodeMessage{MessageType: MESSAGE_ERROR_TYPE_USERID_IS_NULL}
+	ErrorUnknownMessage = &NodeMessage{MessageType: MESSAGE_ERROR_TYPE_UNKNOWN}
+	ErrorTalkTooFastMessage = &NodeMessage{MessageType: MESSAGE_ERROR_TYPE_TALK_TOO_FAST}
 }

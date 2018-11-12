@@ -22,7 +22,7 @@ var (
 func ConnBroadcastingStation() {
 	if config.UseBoradcasting {
 		tryToConnBroadcastingStation()
-		//处理堵到消息之后
+		//处理读到消息之后
 		go func() {
 			for {
 				mType, reader, err := BroadcastingConnection.NextReader()

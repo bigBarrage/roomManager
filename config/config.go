@@ -1,6 +1,7 @@
 package config
 
 import (
+	"os"
 	"time"
 )
 
@@ -20,6 +21,7 @@ var (
 	MaxMessageChannelLength = 128                        //消息通道最大长度
 	MessageReadBufferLength = 1024                       //从websocket连接里面读取消息的缓存大小
 	MessageTimeInterval     = time.Second * 5            //发送消息时间间隔
+	ErrorLogPath            = os.Stderr                  //错误日志记录地点
 	broadcastingOption      = BroadcastingStationOption{ //广播站连接参数
 		Host: "localhost",
 		Port: 9981,

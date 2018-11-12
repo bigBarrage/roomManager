@@ -30,13 +30,16 @@ func SetIpList(list []string) {
 
 //检查IP是否在黑名单内
 func IsBannedIP(ip string) bool {
+	if len(bannedIpList) == 0 {
+		return false
+	}
 	parsedIp := net.ParseIP(ip).To4()
 	currNode := bannedIpList
 	var ok bool
 	for _, ip := range parsedIp {
 		if currNode, ok = currNode[ip]; !ok {
-			return false
+			return true
 		}
 	}
-	return true
+	return false
 }
