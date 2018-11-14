@@ -49,6 +49,9 @@ func sendMessageToChannel(cn *ClientNode, nm system.NodeMessage) error {
 
 //创建房间
 func CreateRoom(roomID string) error {
+	if _, ok := messageChannel[roomID]; ok {
+		return ROOM_ALREADY_EXISTS
+	}
 	messageChannelLock.Lock()
 	defer messageChannelLock.Unlock()
 	c := make(chan system.NodeMessage, config.MaxMessageChannelLength)
@@ -80,6 +83,9 @@ func prepareToCloseRoom(roomID string) error {
 
 //正式关闭房间
 func CloseRoom(roomID string) error {
+	if _, ok := messageChannel[roomID]; !ok {
+		return ROOM_NOT_EXISTS
+	}
 	prepareToCloseRoom(roomID)
 	messageChannelLock.Lock()
 	defer messageChannelLock.Unlock()
